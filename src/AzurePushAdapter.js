@@ -10,7 +10,7 @@ const providerMap = {
 
 module.exports = function AzurePushAdapter(pushConfig) {
   pushConfig = pushConfig || {};
-  let nhClient = nhClientFactory(pushConfig);
+  let nhClient = pushConfig.NHClient || nhClientFactory(pushConfig);
 
   let api = {
     getValidPushTypes: () => ['ios', 'android'],
@@ -29,7 +29,7 @@ module.exports = function AzurePushAdapter(pushConfig) {
         let type = sender.type;
         let headers = sender.generateHeaders(data);
         let payload = sender.generatePayload(data);
-        let sendPromise = nhClient.send(devices, headers, payload);
+        let sendPromise = nhClient[pushConfig.sendFunction || 'bulkSend'](devices, headers, payload);
         sendPromises.push(sendPromise);
       }
       return Parse.Promise.when(sendPromises);

@@ -1,50 +1,84 @@
 'use strict'
 
-const request = require('request');
 const Parse = require('parse/node').Parse;
+const https = require('https');
+const request = require('request');
 const merge = require('deeply');
+const version = '2015-08';
+const boundary = "simple-boundary";
+const chunkSize = 1000;
 
 const generateToken = require('./NHSasToken');
 const nhConnectionString = require('./NHConnectionString');
+const chunkArray = require('./chunkArray')(chunkSize);
+const multipart = require('./multipart')(boundary);
 
 module.exports = pushConfig => {
     pushConfig.ConnectionString = pushConfig.ConnectionString || nhConnectionString.get();
     pushConfig.ConnectionString && nhConnectionString.parse(pushConfig.ConnectionString, pushConfig);
     pushConfig.HubName = pushConfig.HubName || process.env['MS_NotificationHubName'];
 
+
     var api = {
-        send: (handles, headers, payload) => {
-            let pushPromise = new Parse.Promise();
-            let resource = 'messages';
-
-            let defaultHeaders = {
-                'Content-Type': 'application/json;charset=utf-8',
-                'Authorization': generateToken(resource, pushConfig),
-                'x-ms-version': '2015-04',
-                'ServiceBusNotification-DeviceHandle': handles[0].deviceToken
-            }
-
+        directSend: (handles, headers, payload) => {
             let options = {
-                uri: generateResourceUrl(resource) + '?direct&api-version=2015-04',
-                headers: merge(defaultHeaders, headers),
+                uri: 'https://' + pushConfig.Endpoint + '/' + pushConfig.HubName + '/messages/?direct&api-version=' + version,
+                headers: merge({
+                    'Content-Type': 'application/json;charset=utf-8',
+                    'Authorization': generateToken(pushConfig),
+                    'x-ms-version': version,
+                    'ServiceBusNotification-DeviceHandle': ''
+                }, headers),
                 json: payload
-            }
+            };
 
-            request.post(options, (err, res, body) => {
-                if (err) {
-                    pushPromise.reject(err);
-                } else {
-                    pushPromise.resolve();
-                }
-            });
+            return Parse.Promise.when(handles.map(handle => {
+                options.headers['ServiceBusNotification-DeviceHandle'] = handle;
+                let sendPromise = new Parse.Promise();
 
-            return pushPromise;
+                request.post(options, (err, res, body) => {
+                    if (err) {
+                        console.log(err);
+                        sendPromise.reject(err);
+                    } else {
+                        sendPromise.resolve();
+                    }
+                });
+
+                return sendPromise;
+            }));
+        },
+
+        bulkSend: (handles, headers, payload) => {
+            let options = {
+                method: 'post',
+                host: pushConfig.Endpoint,
+                path: '/' + pushConfig.HubName + '/messages/$batch?direct&api-version=' + version,
+                headers: merge({
+                    'Content-Type': 'multipart/mixed; boundary="' + boundary + '"',
+                    'Authorization': generateToken(pushConfig),
+                    'x-ms-version': version,
+                }, headers)
+            };
+
+            return Parse.Promise.when(chunkArray(handles).map(chunk => {
+                let sendPromise = new Parse.Promise();
+                let request = https.request(options);
+                multipart(chunk, payload).pipe(request);
+                request.on('response', function (res) {
+                    console.log(res.statusCode);
+                    sendPromise.resolve();
+                });
+                request.on('error', function (err) {
+                    console.log(err);
+                    sendPromise.reject(err);
+                });
+                return sendPromise;
+            }));
         }
     }
 
-    return api;
 
-    function generateResourceUrl(resource) {
-        return pushConfig.Endpoint + pushConfig.HubName + '/' + resource + '/';
-    }
+
+    return api;
 }

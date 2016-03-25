@@ -2,9 +2,9 @@
 
 const crypto = require('crypto');
 
-module.exports = (resource, config) => {
-    const expiry = Math.floor(Date.now() / 1000 + 3600);
-    const resourceUri = config.Endpoint + config.HubName + '/' + resource;
+module.exports = (config, expiration) => {
+    const expiry = expiration || Math.floor(Date.now() / 1000 + 3600);
+    const resourceUri = config.Endpoint + '/' + config.HubName;
     const stringToSign = encodeURIComponent(resourceUri) + '\n' + expiry;
     const hmac = crypto.createHmac('sha256', config.SharedAccessKey);
     const signature = hmac.update(stringToSign).digest('base64');

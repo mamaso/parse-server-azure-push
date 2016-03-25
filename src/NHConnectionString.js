@@ -8,6 +8,6 @@ module.exports = {
                 pushConfig[keyValuePair.slice(0, splitIndex)] = keyValuePair.slice(splitIndex + 1);
         });
 
-        pushConfig.Endpoint = pushConfig.Endpoint.replace('sb://', 'https://');
+        pushConfig.Endpoint = pushConfig.Endpoint.replace('sb://', '').replace('/', '');
     }
 }

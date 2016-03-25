@@ -19,10 +19,7 @@ module.exports = (installations, validPushTypes) => {
     }
     let pushType = installation.deviceType;
     if (deviceMap[pushType]) {
-      deviceMap[pushType].push({
-        deviceToken: deviceHandle,
-        appIdentifier: installation.appIdentifier
-      });
+      deviceMap[pushType].push(deviceHandle);
     } else {
       console.log('Unknown push type from installation %j', installation);
     }

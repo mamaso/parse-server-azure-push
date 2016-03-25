@@ -6,11 +6,11 @@ const generateObjectId = require('./generateObjectId');
 const GCMTimeToLiveMax = 4 * 7 * 24 * 60 * 60; // GCM allows a max of 4 weeks
 
 module.exports = {
-  generatePayload: parseData => {
+  generatePayload: (parseData, time) => {
     let coreData = parseData.data;
     let expirationTime = parseData.expiration_time;
     let pushId = generateObjectId();
-    let timeStamp = Date.now();
+    let timeStamp = time || Date.now();
     let payloadData =  {
       'time': new Date(timeStamp).toISOString(),
       'push_id': pushId,
