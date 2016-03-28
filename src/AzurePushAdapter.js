@@ -10,7 +10,8 @@ const providerMap = {
 }
 
 module.exports = function AzurePushAdapter(pushConfig) {
-  let nhClient = pushConfig.NHClient || nhClientFactory(nhConfig.get(pushConfig || {}));
+  pushConfig = pushConfig || {};
+  let nhClient = pushConfig.NHClient || nhClientFactory(nhConfig.get(pushConfig));
 
   let api = {
     getValidPushTypes: () => ['ios', 'android'],
