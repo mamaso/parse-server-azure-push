@@ -19,5 +19,5 @@ var server = new ParseServer({
 
 If you do not want to explicitly specify a connection string or hub name,
 they can be specified via environment variables:
-    * ConnectionString: process.env.CUSTOMCONNSTR_MS_NotificationHubConnectionString
-    * HubName: process.env.MS_NotificationHubName
+  * ConnectionString: process.env.CUSTOMCONNSTR_MS_NotificationHubConnectionString
+  * HubName: process.env.MS_NotificationHubName
