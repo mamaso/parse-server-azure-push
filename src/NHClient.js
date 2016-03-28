@@ -6,19 +6,13 @@ const request = require('request');
 const merge = require('deeply');
 const version = '2015-08';
 const boundary = "simple-boundary";
-const chunkSize = 1000;
+const chunkSize = 200;
 
 const generateToken = require('./NHSasToken');
-const nhConnectionString = require('./NHConnectionString');
 const chunkArray = require('./chunkArray')(chunkSize);
 const multipart = require('./multipart')(boundary);
 
 module.exports = pushConfig => {
-    pushConfig.ConnectionString = pushConfig.ConnectionString || nhConnectionString.get();
-    pushConfig.ConnectionString && nhConnectionString.parse(pushConfig.ConnectionString, pushConfig);
-    pushConfig.HubName = pushConfig.HubName || process.env['MS_NotificationHubName'];
-
-
     var api = {
         directSend: (handles, headers, payload) => {
             let options = {
@@ -65,20 +59,14 @@ module.exports = pushConfig => {
                 let sendPromise = new Parse.Promise();
                 let request = https.request(options);
                 multipart(chunk, payload).pipe(request);
-                request.on('response', function (res) {
-                    console.log(res.statusCode);
-                    sendPromise.resolve();
+                request.on('response', (res) => {
+                    sendPromise.resolve(res.statusCode);
                 });
-                request.on('error', function (err) {
-                    console.log(err);
-                    sendPromise.reject(err);
-                });
+                request.on('error', sendPromise.reject);
                 return sendPromise;
             }));
         }
     }
-
-
 
     return api;
 }
