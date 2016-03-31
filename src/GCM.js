@@ -1,6 +1,5 @@
 'use strict'
 
-const Parse = require('parse/node').Parse;
 const generateObjectId = require('./generateObjectId');
 
 const GCMTimeToLiveMax = 4 * 7 * 24 * 60 * 60; // GCM allows a max of 4 weeks
@@ -31,7 +30,11 @@ module.exports = {
       }
       payload.timeToLive = timeToLive;
     }
-    return payload;
+    return JSON.stringify(payload);
   },
-  generateHeaders: parseData => ({ 'ServiceBusNotification-Format': 'gcm' })
+  generateHeaders: parseData => ({ 
+    'ServiceBusNotification-Format': 'gcm',
+    'Content-Type': 'application/json;charset=utf-8'
+  }),
+  chunkSize: 200
 }

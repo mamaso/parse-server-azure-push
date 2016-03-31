@@ -1,7 +1,5 @@
 'use strict'
 
-const Parse = require('parse/node').Parse;
-
 module.exports = {
   generatePayload: parseData => {
     let coreData = parseData.data;
@@ -30,13 +28,17 @@ module.exports = {
       }
     }
     payload.aps = notification;
-    return payload;
+    return JSON.stringify(payload);
   },
   generateHeaders: parseData => {
-    let headers = { 'ServiceBusNotification-Format': 'apple'};
+    let headers = { 
+      'ServiceBusNotification-Format': 'apple',
+      'Content-Type': 'application/json;charset=utf-8'
+    };
     if (parseData.expiration_time) {
       headers["ServiceBusNotification-Apns-Expiry"] = new Date(parseData.expiration_time).toISOString();
     }
     return headers;
-  }
+  },
+  chunkSize: 400
 }

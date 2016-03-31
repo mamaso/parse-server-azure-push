@@ -13,7 +13,7 @@ module.exports = (installations, validPushTypes) => {
     deviceMap[validPushType] = [];
   }
   for (let installation of installations) {
-    let deviceHandle = installation.deviceToken || installation.channelUris;
+    let deviceHandle = installation.deviceToken || getDeviceUri(installation);
     if (!deviceHandle) {
       continue;
     }
@@ -25,4 +25,10 @@ module.exports = (installations, validPushTypes) => {
     }
   }
   return deviceMap;
+}
+
+function getDeviceUri(installation) {
+  if (installation.deviceUris) {
+    return installation.deviceUris["_Default"];
+  }
 }

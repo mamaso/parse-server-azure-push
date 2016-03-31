@@ -4,9 +4,11 @@ const Parse = require('parse/node').Parse;
 const nhClientFactory = require('./NHClient');
 const classifyInstallations = require('./classifyInstallations');
 const nhConfig = require('./NHConfig');
+const chunkArray = require('./chunkArray');
 const providerMap = {
   android: require('./GCM'),
-  ios: require('./APNS')
+  ios: require('./APNS'),
+  winrt: require('./WNS')
 }
 
 module.exports = function AzurePushAdapter(pushConfig) {
@@ -14,7 +16,7 @@ module.exports = function AzurePushAdapter(pushConfig) {
   let nhClient = pushConfig.NHClient || nhClientFactory(nhConfig.get(pushConfig));
 
   let api = {
-    getValidPushTypes: () => ['ios', 'android'],
+    getValidPushTypes: () => ['ios', 'android', 'winrt'],
     send: (data, installations) => {
       let deviceMap = classifyInstallations(installations, api.getValidPushTypes());
       let sendPromises = [];
@@ -29,8 +31,15 @@ module.exports = function AzurePushAdapter(pushConfig) {
         }
         let headers = sender.generateHeaders(data);
         let payload = sender.generatePayload(data);
-        let sendPromise = nhClient[pushConfig.sendType || 'bulkSend'](devices, headers, payload);
-        sendPromises.push(sendPromise);
+        // sender specific chunks necessary until NH fixes 4kb req size limit
+        let chunk = chunkArray(sender.chunkSize);
+        console.log('Sending notification "' + payload + '" to ' + installations.length + ' ' + pushType + ' devices');
+
+        sendPromises.push(Parse.Promise.when(
+          chunk(devices).map(chunkOfDevices => { 
+            return nhClient.bulkSend(chunkOfDevices, headers, payload); 
+          })
+        ));
       }
       return Parse.Promise.when(sendPromises);
     }

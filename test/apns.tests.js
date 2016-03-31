@@ -15,7 +15,7 @@ describe('apns', function () {
             expiration_time: 1001
         });
 
-        expect(payload).to.eql({
+        expect(JSON.parse(payload)).to.eql({
             random: 'random',
             aps: {
                 alert: 'alert',
@@ -33,7 +33,12 @@ describe('apns', function () {
         });
         expect(headers).to.eql({
             'ServiceBusNotification-Format': 'apple',
-            'ServiceBusNotification-Apns-Expiry': '1970-01-01T00:00:01.001Z'
+            'ServiceBusNotification-Apns-Expiry': '1970-01-01T00:00:01.001Z',
+            'Content-Type': 'application/json;charset=utf-8'
         });
+    });
+
+    it('has chunk size', function () {
+        expect(apns.chunkSize).to.equal(400);
     });
 })

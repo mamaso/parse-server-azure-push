@@ -15,8 +15,10 @@ var installations = [
         deviceType: 'ios'
     },
     {
-        channelUris: 4,
-        deviceType: 'windows'
+        deviceUris: {
+            '_Default': 4
+        },
+        deviceType: 'winrt'
     }
 ];
 
@@ -29,11 +31,11 @@ describe('classify installations', function () {
     });
 
     it('classifies all', function () {
-        var mapped = classify(installations, ['android', 'ios', 'windows'])
+        var mapped = classify(installations, ['android', 'ios', 'winrt'])
         expect(mapped).to.eql({
             android: [ 1,2 ],
             ios: [3],
-            windows: [4]
+            winrt: [4]
         });
     });
 })

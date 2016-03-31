@@ -10,6 +10,8 @@ describe('gcm', function () {
             expiration_time: 1001
         }, 1);
 
+        payload = JSON.parse(payload);
+
         expect(payload.priority).to.equal('normal');
         expect(payload.data.time).to.equal('1970-01-01T00:00:00.001Z');
         expect(payload.data.push_id).to.be.ok;
@@ -20,7 +22,12 @@ describe('gcm', function () {
     it('gets headers', function () {
         var headers = gcm.generateHeaders({});
         expect(headers).to.eql({
-            'ServiceBusNotification-Format': 'gcm'
+            'ServiceBusNotification-Format': 'gcm',
+            'Content-Type': 'application/json;charset=utf-8'
         });
+    });
+
+    it('has chunk size', function () {
+        expect(gcm.chunkSize).to.equal(200);
     });
 })
