@@ -1,6 +1,6 @@
 {
   "name": "parse-server-azure-push",
-  "version": "0.0.3",
+  "version": "0.0.4-alpha",
   "description": "A Parse Server push adapter using notification hubs",
   "main": "src/AzurePushAdapter.js",
   "scripts": {
