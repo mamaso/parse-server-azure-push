@@ -33,7 +33,7 @@ module.exports = function AzurePushAdapter(pushConfig) {
         let payload = sender.generatePayload(data);
         // sender specific chunks necessary until NH fixes 4kb req size limit
         let chunk = chunkArray(sender.chunkSize);
-        console.log('Sending notification "' + payload + '" to ' + installations.length + ' ' + pushType + ' devices');
+        console.log('Sending notification "' + payload + '" to ' + devices.length + ' ' + pushType + ' devices');
 
         sendPromises.push(Parse.Promise.when(
           chunk(devices).map(chunkOfDevices => { 

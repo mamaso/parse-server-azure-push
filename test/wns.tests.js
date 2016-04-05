@@ -23,8 +23,10 @@ describe('wns', function () {
 
     it('chooses raw content type octet', function () {
         var headers = wns.generateHeaders({
-            wnsHeaders: {
-                'X-WNS-Type': 'wns/raw'
+            wns: {
+                headers: {
+                    'X-WNS-Type': 'wns/raw'
+                }
             }
         });
         expect(headers).to.eql({
@@ -39,9 +41,12 @@ describe('wns', function () {
             data: {
                 alert: 'push'
             },
-            wnsData: '<wns>A wns notification</wns>',
-            wnsHeaders:  {
-                'X-WNS-Custom': 'custom'
+            wns: {
+                data: '<wns>A wns notification</wns>',
+                headers: {
+                    'X-WNS-Custom': 'custom'
+                },
+                type: 'tile'
             },
             expiration_time: 1001
         };
@@ -54,7 +59,7 @@ describe('wns', function () {
         expect(headers).to.eql({
             'ServiceBusNotification-Format': 'windows',
             'Content-Type': 'text/xml',
-            'X-WNS-Type': 'wns/toast',
+            'X-WNS-Type': 'wns/tile',
             'X-WNS-Custom': 'custom',
             'X-WNS-TTL': 1
         });
