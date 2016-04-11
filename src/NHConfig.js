@@ -4,9 +4,9 @@ const nhConnectionString = require('./NHConnectionString');
 
 module.exports = {
     get: (pushConfig) => {
-        pushConfig.ConnectionString = pushConfig.ConnectionString || nhConnectionString.get();
+        pushConfig.ConnectionString = nhConnectionString.get() || pushConfig.ConnectionString;
         pushConfig.ConnectionString && nhConnectionString.parse(pushConfig.ConnectionString, pushConfig);
-        pushConfig.HubName = pushConfig.HubName || process.env['MS_NotificationHubName'] || createFromSiteName(process.env['WEBSITE_SITE_NAME']);
+        pushConfig.HubName = process.env['MS_NotificationHubName'] || createFromSiteName(process.env['WEBSITE_SITE_NAME']) || pushConfig.HubName;
 
         requiredParam('HubName');
         requiredParam('SharedAccessKeyName');
