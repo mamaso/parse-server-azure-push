@@ -31,6 +31,5 @@ module.exports = {
       headers['X-WNS-TTL'] = timeToLive;
     }
     return merge(wnsHeaders || {}, headers);
-  },
-  chunkSize: 30
+  }
 }

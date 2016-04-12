@@ -64,8 +64,4 @@ describe('wns', function () {
             'X-WNS-TTL': 1
         });
     });
-
-    it('has chunk size', function () {
-        expect(wns.chunkSize).to.equal(30);
-    });
 });

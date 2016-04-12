@@ -26,8 +26,4 @@ describe('gcm', function () {
             'Content-Type': 'application/json;charset=utf-8'
         });
     });
-
-    it('has chunk size', function () {
-        expect(gcm.chunkSize).to.equal(200);
-    });
 })

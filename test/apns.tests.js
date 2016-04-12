@@ -37,8 +37,4 @@ describe('apns', function () {
             'Content-Type': 'application/json;charset=utf-8'
         });
     });
-
-    it('has chunk size', function () {
-        expect(apns.chunkSize).to.equal(400);
-    });
 })

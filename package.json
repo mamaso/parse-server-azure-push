@@ -1,6 +1,6 @@
 {
   "name": "parse-server-azure-push",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "A Parse Server push adapter using notification hubs",
   "main": "src/AzurePushAdapter.js",
   "scripts": {
@@ -14,11 +14,11 @@
   "dependencies": {
     "deeply": "^2.0.0",
     "form-data": "1.0.0-rc4",
-    "parse": "^1.7.1",
-    "request": "^2.69.0"
+    "parse": "^1.7.1"
   },
   "devDependencies": {
     "chai": "^3.5.0",
-    "mocha": "^2.4.5"
+    "mocha": "^2.4.5",
+    "sinon": "^1.17.3"
   }
 }

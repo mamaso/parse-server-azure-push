@@ -35,6 +35,5 @@ module.exports = {
   generateHeaders: parseData => ({ 
     'ServiceBusNotification-Format': 'gcm',
     'Content-Type': 'application/json;charset=utf-8'
-  }),
-  chunkSize: 200
+  })
 }

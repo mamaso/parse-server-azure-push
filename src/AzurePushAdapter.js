@@ -4,7 +4,9 @@ const Parse = require('parse/node').Parse;
 const nhClientFactory = require('./NHClient');
 const classifyInstallations = require('./classifyInstallations');
 const nhConfig = require('./NHConfig');
-const chunkArray = require('./chunkArray');
+// nh resolved 4kb issue, now can send up to 1000 devices per chunk
+const chunkSize = 1000;
+const chunk = require('./chunkArray')(chunkSize);
 const providerMap = {
   android: require('./GCM'),
   ios: require('./APNS'),
@@ -31,8 +33,6 @@ module.exports = function AzurePushAdapter(pushConfig) {
         }
         let headers = sender.generateHeaders(data);
         let payload = sender.generatePayload(data);
-        // sender specific chunks necessary until NH fixes 4kb req size limit
-        let chunk = chunkArray(sender.chunkSize);
         console.log('Sending notification "' + payload + '" to ' + devices.length + ' ' + pushType + ' devices');
 
         sendPromises.push(Parse.Promise.when(

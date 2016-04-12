@@ -39,6 +39,5 @@ module.exports = {
       headers["ServiceBusNotification-Apns-Expiry"] = new Date(parseData.expiration_time).toISOString();
     }
     return headers;
-  },
-  chunkSize: 400
+  }
 }
