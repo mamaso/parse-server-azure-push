@@ -1,3 +1,6 @@
+[![Build Status](https://travis-ci.org/mamaso/parse-server-azure-push.svg?branch=master)](https://travis-ci.org/mamaso/parse-server-azure-push)
+[![Dependency Status](https://david-dm.org/mamaso/parse-server-azure-push.svg)](https://david-dm.org/mamaso/parse-server-azure-push)
+
 # Parse Server Azure Push
 
 This module provides push capabilities for parse server via azure notification hubs.
